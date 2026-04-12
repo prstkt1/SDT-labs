@@ -1,5 +1,12 @@
 import { Client } from "pg";
-import config from "../config.json";
+import fs from "fs";
+
+let config: any;
+try {
+  config = JSON.parse(fs.readFileSync("/etc/mywebapp/config.json", "utf-8"));
+} catch (err) {
+  config = require("../config.json");
+}
 
 async function runMigration() {
   const client = new Client({
