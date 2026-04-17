@@ -1,0 +1,10 @@
+{
+  "port": 5200,
+  "db": {
+    "user": "postgres",
+    "host": "db",
+    "database": "notes_db",
+    "password": "notespasword123",
+    "port": 5432
+  }
+}
