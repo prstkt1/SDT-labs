@@ -85,3 +85,21 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy to Target Node
+    needs: build-and-push
+    runs-on: self-hosted
+    if: github.event_name != 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Copy deployment script to Target Node
+        run: |
+          scp -o StrictHostKeyChecking=no automation/deploy.sh prstkt@192.168.0.109:/tmp/deploy.sh
+
+      - name: Execute deployment script
+        run: |
+          ssh -o StrictHostKeyChecking=no prstkt@192.168.0.109 "chmod +x /tmp/deploy.sh && sudo /tmp/deploy.sh"
