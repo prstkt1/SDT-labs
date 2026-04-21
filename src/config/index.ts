@@ -1,10 +1,12 @@
 import fs from "fs";
+import localConfig from "../../config.json";
 
-let config: any;
+let config: Record<string, unknown>;
+
 try {
   config = JSON.parse(fs.readFileSync("/etc/mywebapp/config.json", "utf-8"));
-} catch (err) {
-  config = require("../../config.json");
+} catch {
+  config = localConfig;
 }
 
 export default config;
