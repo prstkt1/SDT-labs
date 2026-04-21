@@ -25,11 +25,11 @@ fi
 
 
 if [ -d "/opt/mywebapp" ]; then
-    cd /opt/mywebapp
+    cd /opt/mywebapp || exit 1
     git pull
 else
     git clone https://github.com/prstkt1/SDT-labs.git /opt/mywebapp
-    cd /opt/mywebapp
+    cd /opt/mywebapp || exit 1
 fi
 
 npm install

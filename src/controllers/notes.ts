@@ -25,6 +25,7 @@ export const getAllNotes = async (req: Request, res: Response) => {
     }
     return res.json(notes);
   } catch (error) {
+    console.error("Помилка отримання нотаток:", error);
     res.status(500).json({ error: "Помилка сервера" });
   }
 };
@@ -43,6 +44,7 @@ export const createNote = async (req: Request, res: Response) => {
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
+    console.error("Помилка створення нотатки:", error);
     res.status(500).json({ error: "Помилка при створенні нотатки" });
   }
 };
@@ -76,6 +78,7 @@ export const getNoteById = async (req: Request, res: Response) => {
     }
     return res.json(note);
   } catch (error) {
+    console.error(`Помилка отримання нотатки ${id}:`, error);
     res.status(500).json({ error: "Помилка сервера" });
   }
 };

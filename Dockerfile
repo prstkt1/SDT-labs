@@ -10,4 +10,4 @@ COPY . .
 
 RUN npm run build
 
-CMD npm run migrate && npm start
+CMD ["sh", "-c", "npm run migrate && npm start"]

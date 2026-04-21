@@ -12,6 +12,7 @@ export const getReady = async (req: Request, res: Response) => {
     client.release();
     res.status(200).send("OK");
   } catch (error) {
+    console.error("Помилка з'єднання з БД:", error);
     res.status(500).send("Помилка: Сервіс не має доступу до бази даних");
   }
 };
