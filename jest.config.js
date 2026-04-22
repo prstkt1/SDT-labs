@@ -1,8 +1,13 @@
+/* global module */
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  collectCoverage: true,
-  coverageDirectory: "coverage",
+  collectCoverageFrom: [
+    "src/**/*.ts",
+    "!src/migrate.ts",
+    "!src/app.ts",
+    "!src/routes/**/*.ts",
+  ],
   coverageThreshold: {
     global: {
       branches: 40,

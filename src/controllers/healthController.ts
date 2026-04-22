@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import pool from "../db";
+import pool from "../db/index-db";
 
 export const getAlive = (req: Request, res: Response) => {
   res.status(200).send("OK");
