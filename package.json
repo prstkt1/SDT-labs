@@ -9,7 +9,7 @@
     "migrate": "ts-node src/migrate.ts",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "repository": {
     "type": "git",
