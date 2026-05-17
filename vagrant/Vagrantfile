@@ -1,0 +1,46 @@
+mkdir -p ~/SDT-labs/vagrant && cat > ~/SDT-labs/vagrant/Vagrantfile << 'EOF'
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/jammy64"
+  config.vm.box_check_update = false
+
+  config.vm.define "worker" do |worker|
+    worker.vm.hostname = "worker"
+    worker.vm.network "private_network", ip: "192.168.56.101"
+    worker.vm.provider "virtualbox" do |vb|
+      vb.name   = "lab4-worker"
+      vb.memory = 1024
+      vb.cpus   = 1
+    end
+    worker.vm.provision "shell", inline: <<-SHELL
+      apt-get install -y python3
+      useradd -m -s /bin/bash -G sudo ansible
+      mkdir -p /home/ansible/.ssh
+      echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOaQiChU7zJ0UefQ5Yg7ANg6HPr3pPMfH8bJX1Ey2MKi nikita@DESKTOP-CVBBNV4" >> /home/ansible/.ssh/authorized_keys
+      chmod 700 /home/ansible/.ssh
+      chmod 600 /home/ansible/.ssh/authorized_keys
+      chown -R ansible:ansible /home/ansible/.ssh
+      echo "ansible ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ansible
+    SHELL
+  end
+
+  config.vm.define "db" do |db|
+    db.vm.hostname = "db"
+    db.vm.network "private_network", ip: "192.168.56.102"
+    db.vm.provider "virtualbox" do |vb|
+      vb.name   = "lab4-db"
+      vb.memory = 1024
+      vb.cpus   = 1
+    end
+    db.vm.provision "shell", inline: <<-SHELL
+      apt-get install -y python3
+      useradd -m -s /bin/bash -G sudo ansible
+      mkdir -p /home/ansible/.ssh
+      echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOaQiChU7zJ0UefQ5Yg7ANg6HPr3pPMfH8bJX1Ey2MKi nikita@DESKTOP-CVBBNV4" >> /home/ansible/.ssh/authorized_keys
+      chmod 700 /home/ansible/.ssh
+      chmod 600 /home/ansible/.ssh/authorized_keys
+      chown -R ansible:ansible /home/ansible/.ssh
+      echo "ansible ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/ansible
+    SHELL
+  end
+end
+EOF
