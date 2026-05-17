@@ -1,0 +1,101 @@
+---
+- name: Set db IP fact
+  ansible.builtin.set_fact:
+    db_ip: "{{ hostvars[groups['db'][0]]['ansible_host'] }}"
+
+- name: Create app system user
+  ansible.builtin.user:
+    name: "{{ app_user }}"
+    system: true
+    shell: /usr/sbin/nologin
+    state: present
+
+- name: Create operator user
+  ansible.builtin.user:
+    name: operator
+    shell: /bin/bash
+    password: "{{ operator_password | password_hash('sha512') }}"
+    update_password: on_create
+    state: present
+
+- name: Configure sudoers for operator
+  ansible.builtin.template:
+    src: sudoers_operator.j2
+    dest: /etc/sudoers.d/operator
+    owner: root
+    group: root
+    mode: "0440"
+    validate: "/usr/sbin/visudo -cf %s"
+
+- name: Install Node.js 20
+  ansible.builtin.shell: |
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+    apt-get install -y nodejs
+  args:
+    creates: /usr/bin/node
+
+- name: Clone application repository
+  ansible.builtin.git:
+    repo: "{{ app_repo_url }}"
+    dest: "{{ app_repo_dest }}"
+    version: main
+    force: false
+  register: git_result
+
+- name: Install npm dependencies
+  community.general.npm:
+    path: "{{ app_repo_dest }}"
+    state: present
+
+- name: Build TypeScript
+  ansible.builtin.command:
+    cmd: npm run build
+    chdir: "{{ app_repo_dest }}"
+  changed_when: true
+
+- name: Set ownership
+  ansible.builtin.file:
+    path: "{{ app_repo_dest }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    recurse: true
+
+- name: Ensure config directory exists
+  ansible.builtin.file:
+    path: "{{ app_config_dir }}"
+    state: directory
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0750"
+
+- name: Deploy config.json
+  ansible.builtin.template:
+    src: config.json.j2
+    dest: "{{ app_config_dir }}/config.json"
+    owner: "{{ app_user }}"
+    group: "{{ app_group }}"
+    mode: "0640"
+  notify: Restart mywebapp
+
+- name: Deploy systemd unit
+  ansible.builtin.template:
+    src: mywebapp.service.j2
+    dest: "/etc/systemd/system/{{ app_service_name }}.service"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart mywebapp
+
+- name: Enable and start mywebapp
+  ansible.builtin.systemd:
+    name: "{{ app_service_name }}"
+    enabled: true
+    state: started
+
+- name: Block direct access to app port
+  community.general.ufw:
+    rule: deny
+    port: "{{ app_port }}"
+    proto: tcp

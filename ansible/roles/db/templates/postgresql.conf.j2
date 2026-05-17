@@ -1,0 +1,8 @@
+listen_addresses = '{{ db_ip }},127.0.0.1'
+port = {{ db_port }}
+log_destination = 'stderr'
+logging_collector = on
+log_directory = 'log'
+log_filename = 'postgresql-%Y-%m-%d.log'
+shared_buffers = 128MB
+dynamic_shared_memory_type = posix

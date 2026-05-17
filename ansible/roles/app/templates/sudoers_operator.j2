@@ -1,0 +1,6 @@
+operator ALL=(ALL) NOPASSWD: \
+    /usr/bin/systemctl start {{ app_service_name }}.service, \
+    /usr/bin/systemctl stop {{ app_service_name }}.service, \
+    /usr/bin/systemctl restart {{ app_service_name }}.service, \
+    /usr/bin/systemctl status {{ app_service_name }}.service, \
+    /usr/bin/systemctl reload nginx.service

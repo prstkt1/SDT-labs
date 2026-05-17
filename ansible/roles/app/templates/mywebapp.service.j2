@@ -1,0 +1,17 @@
+[Unit]
+Description=Notes Web Application
+After=network.target
+
+[Service]
+Type=simple
+User={{ app_user }}
+Group={{ app_group }}
+WorkingDirectory={{ app_repo_dest }}
+ExecStart=/usr/bin/node {{ app_repo_dest }}/dist/app.js
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

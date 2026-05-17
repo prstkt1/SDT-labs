@@ -1,0 +1,19 @@
+---
+- name: Common configuration (all VMs)
+  hosts: all
+  gather_facts: true
+  roles:
+    - common
+
+- name: Configure database server
+  hosts: db
+  gather_facts: true
+  roles:
+    - db
+
+- name: Configure application + nginx
+  hosts: workers
+  gather_facts: true
+  roles:
+    - app
+    - nginx

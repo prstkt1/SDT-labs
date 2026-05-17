@@ -1,0 +1,18 @@
+---
+app_repo_url: "https://github.com/prstkt1/SDT-labs.git"
+app_repo_dest: "/opt/mywebapp"
+app_port: 5200
+app_config_dir: "/etc/mywebapp"
+app_service_name: "mywebapp"
+app_user: "app"
+app_group: "app"
+
+db_name: "notes_db"
+db_user: "postgres"
+db_password: "notespassword123"
+db_port: 5432
+
+teacher_password: "12345678"
+operator_password: "12345678"
+
+student_variant_n: 21

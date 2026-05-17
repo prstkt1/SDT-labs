@@ -1,0 +1,2 @@
+---
+# DB-specific vars (worker IP resolved at runtime via hostvars)
