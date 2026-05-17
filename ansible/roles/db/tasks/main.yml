@@ -4,6 +4,26 @@
     worker_ip: "{{ hostvars[groups['workers'][0]]['ansible_host'] }}"
     db_ip: "{{ ansible_host }}"
 
+- name: Install dependencies for PostgreSQL repo
+  ansible.builtin.apt:
+    name:
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+    update_cache: true
+
+- name: Add PostgreSQL apt key
+  ansible.builtin.shell:
+    cmd: curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | gpg --dearmor -o /usr/share/keyrings/postgresql.gpg
+    creates: /usr/share/keyrings/postgresql.gpg
+
+- name: Add PostgreSQL apt repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/usr/share/keyrings/postgresql.gpg] https://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+    state: present
+    filename: pgdg
+
 - name: Install PostgreSQL 15
   ansible.builtin.apt:
     name:

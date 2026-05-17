@@ -28,11 +28,14 @@
     validate: "/usr/sbin/visudo -cf %s"
 
 - name: Install Node.js 20
-  ansible.builtin.shell: |
-    curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-    apt-get install -y nodejs
-  args:
+  ansible.builtin.shell:
+    cmd: curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && apt-get install -y nodejs
     creates: /usr/bin/node
+
+- name: Add safe directory for git
+  ansible.builtin.command:
+    cmd: git config --global --add safe.directory {{ app_repo_dest }}
+  changed_when: false
 
 - name: Clone application repository
   ansible.builtin.git:
